@@ -1,0 +1,9 @@
+{
+    "_version": "1.0.0",
+    "name": "OoTR",
+    "channelId": "OOTE",
+    "channelTitle": "OoTRandomizer",
+    "patches": [
+        "./ootr.gzi"
+    ]
+}
