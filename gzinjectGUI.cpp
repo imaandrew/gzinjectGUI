@@ -57,7 +57,11 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
 }
 
 bool gzinjectGUI::isGzIncluded() {
-    QFileInfo included_gz(QCoreApplication::applicationFilePath() + QDir::separator() + "tools/gzinject");
+    QString extension = "";
+    #if defined(Q_OS_WIN)
+    extension = ".exe";
+    #endif
+    QFileInfo included_gz(QCoreApplication::applicationDirPath() + QDir::separator() + "tools/gzinject" + extension);
     return included_gz.exists();
 }
 
@@ -66,7 +70,7 @@ QString gzinjectGUI::initializeGzPath() {
     if (!path.isEmpty() && QFileInfo(path).exists())
         return path;
     else if (isGzIncluded())
-        return QCoreApplication::applicationFilePath() + QDir::separator() + "tools/gzinject";
+        return QCoreApplication::applicationDirPath() + QDir::separator() + "tools/gzinject";
     else
         return nullptr;
 }
@@ -75,7 +79,7 @@ void gzinjectGUI::initializePresets() {
     presets_menu->clear();
     QList<QAction*> presets;
     QList<QAction*> gzi_files;
-    QDir directory("./presets");
+    QDir directory(QCoreApplication::applicationDirPath() + QDir::separator() + "presets");
     QStringList files = directory.entryList(QStringList() << "*.gzi" << "*.json", QDir::Files);
     foreach (QString filename, files) {
         QString filePath = directory.absolutePath() + QDir::separator() + filename;
@@ -104,6 +108,7 @@ void gzinjectGUI::initializePresets() {
 CommandOutput gzinjectGUI::executeCommand(QStringList arguments, bool isCommonKey) {
     if (gzinjectPath.isEmpty()) { return CommandOutput(-1, nullptr, nullptr); }
     QProcess process;
+    process.setWorkingDirectory(QCoreApplication::applicationDirPath());
     process.start(gzinjectPath, arguments);
     if (isCommonKey)
         process.write("45e\n");
@@ -122,8 +127,9 @@ void gzinjectGUI::showAboutWindow() {
 QString gzinjectGUI::gzinjectVersion() {
     CommandOutput version = executeCommand({"--version"});
     QStringList output = version.getStandardOut().split(" ");
-    if (output.length() > 2)
-        return output[2].trimmed();
+    int version_text = output.lastIndexOf("Version");
+    if (output.length() > version_text + 1)
+        return output[version_text + 1].trimmed();
     else
         return "";
 }
@@ -211,7 +217,7 @@ void gzinjectGUI::defineSetting(QString setting, SettingType type) {
 }
 
 void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath, bool openFolderWhenComplete, QString title, QString channel_id, QString additional_args) {
-    QFileInfo common_key("./common-key.bin");
+    QFileInfo common_key(QCoreApplication::applicationDirPath() + QDir::separator() +  "common-key.bin");
     if (!common_key.exists())
         executeCommand({"-a", "genkey"}, true);
     QString wadFileName;
