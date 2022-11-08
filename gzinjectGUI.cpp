@@ -225,22 +225,11 @@ void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath
     wadFileName = rom_file.fileName().split(".")[0] + ".wad";
 
     QStringList arguments;
-    arguments.append("-a");
-    arguments.append("inject");
-    arguments.append("-m");
-    arguments.append(romPath);
-    arguments.append("-w");
-    arguments.append(wadPath);
-    arguments.append("-o");
-    arguments.append(outputPath + QDir::separator() + wadFileName);
-    if (!title.isNull()) {
-        arguments.append("-t");
-        arguments.append(title);
-    }
-    if (!channel_id.isNull()) {
-        arguments.append("-i");
-        arguments.append(channel_id);
-    }
+    arguments << "-a" << "inject" << "-m" << romPath << "-w" << wadPath << "-o" << outputPath + QDir::separator() + wadFileName;
+    if (!title.isNull())
+        arguments << "-t" << title;
+    if (!channel_id.isNull())
+        arguments << "-i" << channel_id;
     if (!additional_args.isEmpty()) {
         QStringList stringList = additional_args.split(" ");
         for (int i = 0; i < stringList.length(); i++) {
@@ -250,7 +239,7 @@ void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath
                 stringItem += " " + stringList[i+1];
                 i++;
             }
-            arguments.append(stringItem);
+            arguments << stringItem;
         }
     }
     arguments.append("--cleanup");
