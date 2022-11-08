@@ -28,6 +28,7 @@ class gzinjectGUI : public QMainWindow {
         gzinjectGUI(QWidget *parent = nullptr);
         void injectWAD(QString romPath, QString wadPath, QString outputPath, bool openFolderWhenComplete, QString title = nullptr, QString channel_id = nullptr, QString additional_args = nullptr);
         void defineSetting(QString setting, SettingType type);
+        void checkAutoLoad(QFileInfo rom);
     private slots:
         void quitMainWindow();
         void setGzPath();

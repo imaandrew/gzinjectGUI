@@ -77,7 +77,7 @@ QString gzinjectGUI::initializeGzPath() {
 
 void gzinjectGUI::initializePresets() {
     presets_menu->clear();
-    QList<QAction*> presets;
+    QList<QAction*> preset_actions;
     QList<QAction*> gzi_files;
     QDir directory(QCoreApplication::applicationDirPath() + QDir::separator() + "presets");
     QStringList files = directory.entryList(QStringList() << "*.gzi" << "*.json", QDir::Files);
@@ -85,10 +85,11 @@ void gzinjectGUI::initializePresets() {
         QString filePath = directory.absolutePath() + QDir::separator() + filename;
         if (filePath.endsWith(".json")) {
             auto preset = Preset(filePath);
+            presets.append(preset);
             if (!preset.getName().isNull()) {
                 auto *action = new QAction(preset.getName());
                 connect(action, &QAction::triggered, this, [this, preset]{ applyPreset(preset); });
-                presets.append(action);
+                preset_actions.append(action);
             }
         } else {
             auto *action = new QAction(QFileInfo(filePath).fileName());
@@ -96,12 +97,20 @@ void gzinjectGUI::initializePresets() {
             gzi_files.append(action);
         }
     }
-    foreach(QAction *action, presets) {
+    foreach(QAction *action, preset_actions) {
         presets_menu->addAction(action);
     }
     presets_menu->addSeparator();
     foreach (QAction *action, gzi_files) {
         presets_menu->addAction(action);
+    }
+}
+
+void gzinjectGUI::checkAutoLoad(QFileInfo rom) {
+    foreach (Preset preset, presets) {
+        if (preset.testRomString(rom.fileName())) {
+            applyPreset(preset);
+        }
     }
 }
 

@@ -8,6 +8,8 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 class Preset {
     public:
@@ -19,6 +21,7 @@ class Preset {
         QString getChannelTitle();
         QStringList getPatches();
         
+        bool testRomString(QString romName);
     private:
         QString absolutePathOfPatch(QString patchPath);
 
@@ -27,5 +30,6 @@ class Preset {
         QString channelId;
         QString channelTitle;
         QStringList patches;
+        QStringList autoLoad;
         QString absolutePath;
 };

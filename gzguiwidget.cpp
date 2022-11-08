@@ -111,6 +111,7 @@ void gzGUIWidget::rom_btn_clicked() {
             output_path->setText(rom_path.absoluteDir().absolutePath());
             gzinject_gui->defineSetting(rom_path.absoluteDir().absolutePath(), SettingType::OutputPath);
         }
+        gzinject_gui->checkAutoLoad(rom_path);
         gzinject_gui->defineSetting(rom_path.absoluteDir().absolutePath(), SettingType::RomPath);
     }
 }

@@ -15,10 +15,15 @@ Preset::Preset(QString filename) {
     channelId = object.value("channelId").toString(nullptr);
     channelTitle = object.value("channelTitle").toString(nullptr);
     QJsonArray patch_array = object.value("patches").toArray();
+    QJsonArray autoload_array = object.value("autoload").toArray();
     
     foreach (QJsonValue value, patch_array) {
         if (value.isString())
             patches.append(absolutePathOfPatch(value.toString()));
+    }
+    foreach (QJsonValue value, autoload_array) {
+        if (value.isString())
+            autoLoad.append(value.toString());
     }
 }
 
@@ -27,6 +32,16 @@ QString Preset::absolutePathOfPatch(QString patchPath) {
         return absolutePath + QDir::separator() + patchPath.mid(2);
     else
         return patchPath;
+}
+
+bool Preset::testRomString(QString romName) {
+    foreach (QString item, autoLoad) {
+        QRegularExpression re(item);
+        QRegularExpressionMatch match = re.match(romName);
+        if (match.hasMatch())
+            return true;
+    }
+    return false;
 }
 
 QString Preset::getVersion() {
