@@ -36,6 +36,7 @@ class gzinjectGUI : public QMainWindow {
         void applyPatch();
         void applyPatch(QString filePath);
         void applyPreset(Preset preset);
+        void clearMiscArgs();
     private:
         gzGUIWidget *guiwidget;
         CommandOutput executeCommand(QStringList arguments, bool isCommonKey = false);

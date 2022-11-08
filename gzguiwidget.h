@@ -24,6 +24,7 @@ class gzGUIWidget : public QWidget {
         void initializeSettings(QString setting, SettingType type);
         void updateChannelId(QString channelId);
         void updateChannelTitle(QString channelTitle);
+        void clearArgs();
     private slots:
         void rom_btn_clicked();
         void wad_btn_clicked();

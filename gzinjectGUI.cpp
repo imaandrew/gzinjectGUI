@@ -31,6 +31,8 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
     auto *about_item = new QAction("About", this);
     about_item->setShortcut(QKeySequence(QKeySequence::HelpContents));
     auto *apply_patch = new QAction("Apply Patch File", this);
+    auto *clear_misc_args = new QAction("Clear Misc Arguments", this);
+    clear_misc_args->setShortcut(QKeySequence("Ctrl+W"));
 
     QMenu *file = menuBar()->addMenu("&File");
     presets_menu = menuBar()->addMenu("&Presets");
@@ -39,6 +41,7 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
 
     file->addAction(setgzpath);
     file->addAction(apply_patch);
+    file->addAction(clear_misc_args);
     file->addSeparator();
     file->addAction(quit);
 
@@ -54,6 +57,7 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
     connect(setgzpath, SIGNAL(triggered()), this, SLOT(setGzPath()));
     connect(about_item, SIGNAL(triggered()), this, SLOT(showAboutWindow()));
     connect(apply_patch, SIGNAL(triggered()), this, SLOT(applyPatch()));
+    connect(clear_misc_args, SIGNAL(triggered()), this, SLOT(clearMiscArgs()));
 }
 
 bool gzinjectGUI::isGzIncluded() {
@@ -168,6 +172,12 @@ void gzinjectGUI::applyPreset(Preset preset) {
 void gzinjectGUI::applyPatch(QString filePath) {
     QString path = filePath.replace(" ", "\\ ");
     guiwidget->appendToArgs("-p " + path);
+}
+
+void gzinjectGUI::clearMiscArgs() {
+    guiwidget->updateChannelTitle("");
+    guiwidget->updateChannelId("");
+    guiwidget->clearArgs();
 }
 
 void gzinjectGUI::applyPatch() {

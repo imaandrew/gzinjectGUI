@@ -90,6 +90,10 @@ void gzGUIWidget::appendToArgs(QString argument) {
     additional_args->setText(args_text);
 }
 
+void gzGUIWidget::clearArgs() {
+    additional_args->setText("");
+}
+
 void gzGUIWidget::updateChannelId(QString channelId) {
     channel_id->setText(channelId);
 }
