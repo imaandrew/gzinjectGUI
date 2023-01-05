@@ -1,5 +1,5 @@
 #pragma once
 
 enum class SettingType {
-    RomPath, WadPath, OutputPath, OpenFolderWhenComplete
+    RomPath, PatchPath, WadPath, OutputPath, OpenFolderWhenComplete
 };

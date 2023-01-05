@@ -24,11 +24,13 @@ class Preset;
 class gzinjectGUI : public QMainWindow {
     Q_OBJECT
 
-    public:
+public:
         gzinjectGUI(QWidget *parent = nullptr);
         void injectWAD(QString romPath, QString wadPath, QString outputPath, bool openFolderWhenComplete, QString title = nullptr, QString channel_id = nullptr, QString additional_args = nullptr);
+        void patchROM(QString romPath, QString patchPath, QString outPath);
         void defineSetting(QString setting, SettingType type);
         void checkAutoLoad(QFileInfo rom);
+        void cleanup();
     private slots:
         void quitMainWindow();
         void setGzPath();
@@ -42,16 +44,22 @@ class gzinjectGUI : public QMainWindow {
         CommandOutput executeCommand(QStringList arguments, bool isCommonKey = false);
         void openFileLocation(QString path);
         QString initializeGzPath();
+        QString initializeXdeltaPath();
         bool isGzIncluded();
+        bool isXdeltaIncluded();
         QString gzinjectVersion();
         void remakeAboutWindow();
         QSettings *settings;
         QString gzinjectPath;
+        QString xdeltaPath;
+        QString compressedRomPath;
         void initializePresets();
 
         QMenu *presets_menu;
         QList<Preset> presets;
 
         QMessageBox pathnotfound;
+        QMessageBox xdeltanotfound;
         QMessageBox aboutwindow;
+
 };

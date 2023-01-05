@@ -6,6 +6,7 @@ notes/
 
 .vscode/
 .xcode/
+.idea/
 
 [Dd]ebug/
 [Rr]elease/

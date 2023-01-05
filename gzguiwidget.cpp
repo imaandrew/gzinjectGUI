@@ -8,6 +8,11 @@ gzGUIWidget::gzGUIWidget(QWidget *parent) : QWidget(parent) {
     og_rom_path = new QLineEdit(this);
     auto *og_rom_btn = new QPushButton("Browse...", this);
 
+    auto *og_patch_lbl = new QLabel("ROM Patch", this);
+    og_patch_lbl->setFixedHeight(20);
+    og_patch_path = new QLineEdit(this);
+    auto *og_patch_btn = new QPushButton("Browse...", this);
+
     auto *og_wad_lbl = new QLabel("WAD File", this);
     og_wad_lbl->setFixedHeight(20);
     og_wad_path = new QLineEdit(this);
@@ -36,7 +41,7 @@ gzGUIWidget::gzGUIWidget(QWidget *parent) : QWidget(parent) {
 
     auto *box_layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    auto *channel_info_grid = new QGridLayout(this);
+    auto *channel_info_grid = new QGridLayout();
     channel_info_grid->addWidget(channel_title_lbl, 0, 0);
     channel_info_grid->addWidget(channel_title, 1, 0);
     channel_info_grid->addWidget(channel_id_lbl, 0, 1);
@@ -45,6 +50,9 @@ gzGUIWidget::gzGUIWidget(QWidget *parent) : QWidget(parent) {
     box_layout->addWidget(og_rom_lbl);
     box_layout->addWidget(og_rom_path);
     box_layout->addWidget(og_rom_btn);
+    box_layout->addWidget(og_patch_lbl);
+    box_layout->addWidget(og_patch_path);
+    box_layout->addWidget(og_patch_btn);
     box_layout->addWidget(og_wad_lbl);
     box_layout->addWidget(og_wad_path);
     box_layout->addWidget(og_wad_btn);
@@ -60,6 +68,7 @@ gzGUIWidget::gzGUIWidget(QWidget *parent) : QWidget(parent) {
     setLayout(box_layout);
 
     connect(og_rom_btn, &QPushButton::released, this, &gzGUIWidget::rom_btn_clicked);
+    connect(og_patch_btn, &QPushButton::released, this, &gzGUIWidget::patch_btn_clicked);
     connect(og_wad_btn, &QPushButton::released, this, &gzGUIWidget::wad_btn_clicked);
     connect(output_btn, &QPushButton::released, this, &gzGUIWidget::output_btn_clicked);
     connect(generate_btn, &QPushButton::released, this, &gzGUIWidget::generate);
@@ -70,6 +79,9 @@ void gzGUIWidget::initializeSettings(QString setting, SettingType type) {
     switch(type) {
         case SettingType::RomPath:
             defaultRomSearchPath = setting;
+            break;
+        case SettingType::PatchPath:
+            defaultPatchSearchPath = setting;
             break;
         case SettingType::WadPath:
             og_wad_path->setText(setting);
@@ -117,6 +129,24 @@ void gzGUIWidget::rom_btn_clicked() {
         }
         gzinject_gui->checkAutoLoad(rom_path);
         gzinject_gui->defineSetting(rom_path.absoluteDir().absolutePath(), SettingType::RomPath);
+    }
+}
+
+void gzGUIWidget::patch_btn_clicked() {
+    QString patchPath;
+    if (defaultPatchSearchPath.isEmpty())
+        patchPath = handleFileDialog("Open Patch", "XDelta3 Patch Files (*.xdelta)");
+    else
+        patchPath = handleFileDialog("Open Patch", "XDelta3 Patch Files (*.xdelta)", defaultPatchSearchPath);
+    if (!patchPath.isEmpty()) {
+        og_patch_path->setText(patchPath);
+        QFileInfo patch_path(patchPath);
+        if (output_path->text().isEmpty()) {
+            output_path->setText(patch_path.absoluteDir().absolutePath());
+            gzinject_gui->defineSetting(patch_path.absoluteDir().absolutePath(), SettingType::OutputPath);
+        }
+        gzinject_gui->checkAutoLoad(patch_path);
+        gzinject_gui->defineSetting(patch_path.absoluteDir().absolutePath(), SettingType::PatchPath);
     }
 }
 
@@ -171,5 +201,7 @@ void gzGUIWidget::generate() {
         channelId = channel_id->text();
     if (!additional_args->text().isEmpty())
         additionalArgs = additional_args->text();
-    gzinject_gui->injectWAD(og_rom_path->text(), og_wad_path->text(), output_path->text(), output_cbox->isChecked(), channelTitle, channelId, additionalArgs);
+    gzinject_gui->patchROM(og_rom_path->text(), og_patch_path->text(), QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64");
+    gzinject_gui->injectWAD(QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64", og_wad_path->text(), output_path->text(), output_cbox->isChecked(), channelTitle, channelId, additionalArgs);
+    gzinject_gui->cleanup();
 }

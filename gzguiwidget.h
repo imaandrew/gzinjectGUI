@@ -27,6 +27,7 @@ class gzGUIWidget : public QWidget {
         void clearArgs();
     private slots:
         void rom_btn_clicked();
+        void patch_btn_clicked();
         void wad_btn_clicked();
         void output_btn_clicked();
         void generate();
@@ -36,8 +37,10 @@ class gzGUIWidget : public QWidget {
         QString handleFileDialog(QString windowTitle = "Select File", QString fileType = "Any File (*)", QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
 
         QString defaultRomSearchPath;
+        QString defaultPatchSearchPath;
         
         QLineEdit *og_rom_path;
+        QLineEdit *og_patch_path;
         QLineEdit *og_wad_path;
         QLineEdit *output_path;
         QLineEdit *channel_title;

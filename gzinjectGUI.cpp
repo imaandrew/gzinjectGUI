@@ -1,3 +1,6 @@
+#include <filesystem>
+#include <QStyleFactory>
+
 #include "gzinjectGUI.h"
 
 #define _STR(x) #x
@@ -7,13 +10,18 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
     settings = new QSettings("Mini's Applications", "gzinjectGUI");
     resize(300, 500);
     gzinjectPath = initializeGzPath();
+    xdeltaPath = initializeXdeltaPath();
 
     aboutwindow.setText("About gzinjectGUI");
     remakeAboutWindow();
     pathnotfound.setText("gzinject not found");
     pathnotfound.setInformativeText("gzinject could not be found, either the executable was not included in the download, or the path set by the user no longer exists. This can be corrected by either putting gzinject in \"tools/gzinject\", or manually setting a path in File -> Set gzinject Path.");
     pathnotfound.setIcon(QMessageBox::Critical);
-    
+    xdeltanotfound.setText("xdelta3 not found");
+    xdeltanotfound.setInformativeText("xdelta3 could not be found, either the executable was not included in the download, or the path set by the user no longer exists. This can be corrected by either putting gzinject in \"tools/gzinject\", or manually setting a path in File -> Set gzinject Path.");
+    xdeltanotfound.setIcon(QMessageBox::Critical);
+
+
     guiwidget = new gzGUIWidget(this);
 
     QString openFolderSetting = "";
@@ -21,6 +29,7 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
         openFolderSetting = "true";
 
     guiwidget->initializeSettings(settings->value("file/romPath").toString(), SettingType::RomPath);
+    guiwidget->initializeSettings(settings->value("file/patchPath").toString(), SettingType::PatchPath);
     guiwidget->initializeSettings(settings->value("file/wadPath").toString(), SettingType::WadPath);
     guiwidget->initializeSettings(settings->value("file/outputPath").toString(), SettingType::OutputPath);
     guiwidget->initializeSettings(openFolderSetting, SettingType::OpenFolderWhenComplete);
@@ -53,6 +62,12 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
     if (gzinjectPath.isNull())
         pathnotfound.exec();
 
+    if (xdeltaPath.isNull()) {
+        xdeltanotfound.exec();
+        this->cleanup();
+        exit(1);
+    }
+
     connect(quit, SIGNAL(triggered()), this, SLOT(quitMainWindow()));
     connect(setgzpath, SIGNAL(triggered()), this, SLOT(setGzPath()));
     connect(about_item, SIGNAL(triggered()), this, SLOT(showAboutWindow()));
@@ -69,12 +84,28 @@ bool gzinjectGUI::isGzIncluded() {
     return included_gz.exists();
 }
 
+bool gzinjectGUI::isXdeltaIncluded() {
+    QString extension = "";
+#if defined(Q_OS_WIN)
+    extension = ".exe";
+#endif
+    QFileInfo included_xdelta(QCoreApplication::applicationDirPath() + QDir::separator() + "tools/xdelta3" + extension);
+    return included_xdelta.exists();
+}
+
 QString gzinjectGUI::initializeGzPath() {
     QString path = settings->value("file/gzpath").toString();
     if (!path.isEmpty() && QFileInfo(path).exists())
         return path;
     else if (isGzIncluded())
         return QCoreApplication::applicationDirPath() + QDir::separator() + "tools/gzinject";
+    else
+        return nullptr;
+}
+
+QString gzinjectGUI::initializeXdeltaPath() {
+    if (isXdeltaIncluded())
+        return QCoreApplication::applicationDirPath() + QDir::separator() + "tools/xdelta3";
     else
         return nullptr;
 }
@@ -171,6 +202,7 @@ void gzinjectGUI::applyPreset(Preset preset) {
 
 void gzinjectGUI::applyPatch(QString filePath) {
     QString path = filePath.replace(" ", "\\ ");
+    guiwidget->clearArgs();
     guiwidget->appendToArgs("-p " + path);
 }
 
@@ -235,13 +267,30 @@ void gzinjectGUI::defineSetting(QString setting, SettingType type) {
     }
 }
 
+void gzinjectGUI::patchROM(QString romPath, QString patchPath, QString outPath) {
+    QStringList arguments;
+    arguments << "-d" << "-f" << "-s" << romPath << patchPath << outPath;
+
+    QProcess process;
+    process.setWorkingDirectory(QCoreApplication::applicationDirPath());
+    process.start(xdeltaPath, arguments);
+    process.waitForFinished(-1);
+    if (process.exitCode() != 0) {
+        QMessageBox failedCommand;
+        failedCommand.setText("Command failed with exit code " + QString::number(process.exitCode()));
+        failedCommand.setInformativeText(process.readAllStandardOutput() + "\n\n" + process.readAllStandardError());
+        failedCommand.setIcon(QMessageBox::Critical);
+        failedCommand.exec();
+    }
+}
+
 void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath, bool openFolderWhenComplete, QString title, QString channel_id, QString additional_args) {
     QFileInfo common_key(QCoreApplication::applicationDirPath() + QDir::separator() +  "common-key.bin");
     if (!common_key.exists())
         executeCommand({"-a", "genkey"}, true);
     QString wadFileName;
     QFileInfo rom_file(romPath);
-    wadFileName = rom_file.fileName().split(".")[0] + ".wad";
+    wadFileName = title.isNull() ? rom_file.fileName().split(".")[0] : title.replace(" ", "") + ".wad";
 
     QStringList arguments;
     arguments << "-a" << "inject" << "-m" << romPath << "-w" << wadPath << "-o" << outputPath + QDir::separator() + wadFileName;
@@ -262,6 +311,7 @@ void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath
         }
     }
     arguments.append("--cleanup");
+    QString str = arguments.join(" ");
     CommandOutput output = executeCommand(arguments);
     if (output.getExitCode() != 0) {
         QMessageBox failedCommand;
@@ -273,5 +323,17 @@ void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath
     else {
         if (openFolderWhenComplete)
             openFileLocation(outputPath + QDir::separator() + wadFileName);
+    }
+}
+
+void gzinjectGUI::cleanup() {
+    try {
+        QString x = QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64";
+        std::filesystem::remove(x.toStdString());
+        x = QCoreApplication::applicationDirPath() + QDir::separator() + "rom_compressed";
+        std::filesystem::remove(x.toStdString());
+    }
+    catch(const std::filesystem::filesystem_error& err) {
+        qDebug() << "error deleting file: " << err.what() << "\n";
     }
 }
