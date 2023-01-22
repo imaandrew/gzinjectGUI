@@ -1,0 +1,9 @@
+{
+    "_version": "3.0.0",
+    "name": "fp-JP",
+    "channelId": "FPJP",
+    "channelTitle": "fp-JP",
+    "patches": [
+        "./mem_patch.gzi"
+    ]
+}

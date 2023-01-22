@@ -1,0 +1,9 @@
+{
+    "_version": "3.0.0",
+    "name": "fp-US",
+    "channelId": "FPUS",
+    "channelTitle": "fp-US",
+    "patches": [
+        "./mem_patch.gzi"
+    ]
+}
