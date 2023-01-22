@@ -1,10 +1,12 @@
-cmake_minimum_required(VERSION 3.5)
-project(gzinjectGUI)
+cmake_minimum_required(VERSION 3.16)
+
+project(gzinjectGUI VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+qt_standard_project_setup()
 
 execute_process(
         COMMAND git describe --always
@@ -14,15 +16,27 @@ execute_process(
 )
 add_compile_definitions(GIT_VERSION=${GIT_VERSION})
 
-find_package(Qt5 COMPONENTS
-        Core
-        Gui
-        Widgets
-        REQUIRED)
+add_executable(gzinjectGUI
+        main.cpp
+        gzinjectGUI.cpp
+        commandOutput.cpp
+        gzguiwidget.cpp
+	preset.cpp
+)
 
-add_executable(gzinjectGUI WIN32 main.cpp gzinjectGUI.cpp commandOutput.cpp gzguiwidget.cpp preset.cpp)
-target_link_libraries(gzinjectGUI
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Widgets
-        )
+target_link_libraries(gzinjectGUI PRIVATE Qt6::Widgets)
+
+set_target_properties(gzinjectGUI PROPERTIES
+    WIN32_EXECUTABLE ON
+    MACOSX_BUNDLE ON
+)
+
+if(APPLE)
+add_custom_command(TARGET gzinjectGUI
+      POST_BUILD COMMAND
+      ${CMAKE_INSTALL_NAME_TOOL} -add_rpath "@executable_path/../Frameworks/"
+      $<TARGET_FILE:gzinjectGUI>)
+endif()
+
+install(TARGETS gzinjectGUI
+  RUNTIME DESTINATION bin BUNDLE DESTINATION bin)
