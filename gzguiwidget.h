@@ -37,7 +37,6 @@ class gzGUIWidget : public QWidget {
         QString handleFileDialog(QString windowTitle = "Select File", QString fileType = "Any File (*)", QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
 
         QString defaultRomSearchPath;
-        QString defaultPatchSearchPath;
         
         QLineEdit *og_rom_path;
         QLineEdit *og_patch_path;

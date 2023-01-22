@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <QDebug>
 #include <QStyleFactory>
 
 #include "gzinjectGUI.h"
@@ -29,7 +30,6 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
         openFolderSetting = "true";
 
     guiwidget->initializeSettings(settings->value("file/romPath").toString(), SettingType::RomPath);
-    guiwidget->initializeSettings(settings->value("file/patchPath").toString(), SettingType::PatchPath);
     guiwidget->initializeSettings(settings->value("file/wadPath").toString(), SettingType::WadPath);
     guiwidget->initializeSettings(settings->value("file/outputPath").toString(), SettingType::OutputPath);
     guiwidget->initializeSettings(openFolderSetting, SettingType::OpenFolderWhenComplete);

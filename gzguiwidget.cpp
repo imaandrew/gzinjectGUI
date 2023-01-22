@@ -80,9 +80,6 @@ void gzGUIWidget::initializeSettings(QString setting, SettingType type) {
         case SettingType::RomPath:
             defaultRomSearchPath = setting;
             break;
-        case SettingType::PatchPath:
-            defaultPatchSearchPath = setting;
-            break;
         case SettingType::WadPath:
             og_wad_path->setText(setting);
             break;
@@ -134,19 +131,9 @@ void gzGUIWidget::rom_btn_clicked() {
 
 void gzGUIWidget::patch_btn_clicked() {
     QString patchPath;
-    if (defaultPatchSearchPath.isEmpty())
-        patchPath = handleFileDialog("Open Patch", "XDelta3 Patch Files (*.xdelta)");
-    else
-        patchPath = handleFileDialog("Open Patch", "XDelta3 Patch Files (*.xdelta)", defaultPatchSearchPath);
+    patchPath = handleFileDialog("Open Patch", "XDelta3 Patch Files (*.xdelta)");
     if (!patchPath.isEmpty()) {
         og_patch_path->setText(patchPath);
-        QFileInfo patch_path(patchPath);
-        if (output_path->text().isEmpty()) {
-            output_path->setText(patch_path.absoluteDir().absolutePath());
-            gzinject_gui->defineSetting(patch_path.absoluteDir().absolutePath(), SettingType::OutputPath);
-        }
-        gzinject_gui->checkAutoLoad(patch_path);
-        gzinject_gui->defineSetting(patch_path.absoluteDir().absolutePath(), SettingType::PatchPath);
     }
 }
 
