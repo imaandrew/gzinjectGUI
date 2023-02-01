@@ -1,0 +1,85 @@
+release: 6.4.2
+platform: win32-msvc
+name: qt
+
+compiler:
+    name: visual_studio
+    version: 2022
+    edition: Community
+    vcvarsall: x64
+
+configure:
+    additional_parameters: -c++std c++20 -release -ltcg -no-opengl -no-pch
+    nomake:
+        - examples
+        - tests
+    skip:
+        - qt3d
+        - qt5compat
+        - qtactiveqt
+        - qtcharts
+        - qtcoap
+        - qtconnectivity
+        - qtdatavis3d
+        - qtdeclarative
+        - qtdoc
+        - qthttpserver
+        - qtimageformats
+        - qtlanguageserver
+        - qtlottie
+        - qtmqtt
+        - qtmultimedia
+        - qtnetworkauth
+        - qtopcua
+        - qtpositioning
+        - qtquick3d
+        - qtquick3dphysics
+        - qtquicktimeline
+        - qtremoteobjects
+        - qtscxml
+        - qtsensors
+        - qtserialbus
+        - qtserialport
+        - qtshadertools
+        - qtspeech
+        - qtsvg
+        - qttools
+        - qttranslations
+        - qtvirtualkeyboard
+        - qtwayland
+        - qtwebchannel
+        - qtwebengine
+        - qtwebsockets
+        - qtwebview
+    feature:
+        androiddeployqt: false
+        concurrent: false
+        dbus: false
+        imageformat_bmp: false
+        network: false
+        printsupport: false
+        qmake: false
+        sql: false
+        testlib: false
+        textmarkdownreader: false
+        textmarkdownwriter: false
+        textodfwriter: false
+        tiff: false
+        webp: false
+
+postprocess:
+    delete:
+        - doc
+        - include/QtXml
+        - lib/cmake/Qt6Xml
+        - modules/Xml.json
+    delete_regex:
+        - bin\\android.*
+        - bin\\Qt6Xml.*
+        - bin\\.*\.bat
+        - bin\\.*\.cmake
+        - bin\\.*\.pl
+        - lib\\metatypes\\qt6xml_.*\.json
+        - lib\\Qt6Xml.*
+        - .*\.prl
+    archive_pdbs: false
