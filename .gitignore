@@ -11,6 +11,7 @@ notes/
 [Dd]ebug/
 [Rr]elease/
 build/
+/bin/
 
 *.bak
 # C++ objects and libs
@@ -22,7 +23,6 @@ build/
 *.lai
 *.so
 *.so.*
-*.dll
 *.dylib
 
 # Qt-es
