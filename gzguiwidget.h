@@ -32,6 +32,7 @@ class gzGUIWidget : public QWidget {
         void output_btn_clicked();
         void generate();
         void updateCheckBoxSetting(int state);
+        void updateCustomCheckBoxSetting(int state);
     private:
         gzinjectGUI *gzinject_gui;
         QString handleFileDialog(QString windowTitle = "Select File", QString fileType = "Any File (*)", QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
@@ -39,6 +40,7 @@ class gzGUIWidget : public QWidget {
         QString defaultRomSearchPath;
         
         QLineEdit *og_rom_path;
+        QPushButton *og_rom_btn;
         QLineEdit *og_patch_path;
         QLineEdit *og_wad_path;
         QLineEdit *output_path;
@@ -46,4 +48,5 @@ class gzGUIWidget : public QWidget {
         QLineEdit *channel_id;
         QLineEdit *additional_args;
         QCheckBox *output_cbox;
+        QCheckBox *custom_cbox;
 };

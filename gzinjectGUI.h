@@ -28,6 +28,7 @@ public:
         gzinjectGUI(QWidget *parent = nullptr);
         void injectWAD(QString romPath, QString wadPath, QString outputPath, bool openFolderWhenComplete, QString title = nullptr, QString channel_id = nullptr, QString additional_args = nullptr);
         void patchROM(QString romPath, QString patchPath, QString outPath);
+        void extractROM(QString wadPath, QString outPath);
         void defineSetting(QString setting, SettingType type);
         void checkAutoLoad(QFileInfo rom);
         void cleanup();

@@ -267,6 +267,31 @@ void gzinjectGUI::defineSetting(QString setting, SettingType type) {
     }
 }
 
+void gzinjectGUI::extractROM(QString wadPath, QString outPath) {
+    QFileInfo common_key(QCoreApplication::applicationDirPath() + QDir::separator() +  "common-key.bin");
+    if (!common_key.exists())
+        executeCommand({"-a", "genkey"}, true);
+    
+    CommandOutput output = executeCommand({"-a", "extract", "-w", wadPath});
+    if (output.getExitCode() != 0) {
+        QMessageBox failedCommand;
+        failedCommand.setText("Command failed with exit code " + QString::number(output.getExitCode()));
+        failedCommand.setInformativeText(output.getStandardOut() + "\n\n" + output.getStandardErr());
+        failedCommand.setIcon(QMessageBox::Critical);
+        failedCommand.exec();
+    }
+
+    QString romPath = QCoreApplication::applicationDirPath() + QDir::separator() + "wadextract" + QDir::separator() + "content5" + QDir::separator() + "romc";
+    output = executeCommand({"-a", "romc", "-m", romPath, "-o", outPath});
+    if (output.getExitCode() != 0) {
+        QMessageBox failedCommand;
+        failedCommand.setText("Command failed with exit code " + QString::number(output.getExitCode()));
+        failedCommand.setInformativeText(output.getStandardOut() + "\n\n" + output.getStandardErr());
+        failedCommand.setIcon(QMessageBox::Critical);
+        failedCommand.exec();
+    }
+}
+
 void gzinjectGUI::patchROM(QString romPath, QString patchPath, QString outPath) {
     QStringList arguments;
     arguments << "-d" << "-f" << "-s" << romPath << patchPath << outPath;
@@ -329,6 +354,8 @@ void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath
 void gzinjectGUI::cleanup() {
     try {
         QString x = QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64";
+        std::filesystem::remove(x.toStdString());
+        x = QCoreApplication::applicationDirPath() + QDir::separator() + "decompressed_rom.z64";
         std::filesystem::remove(x.toStdString());
         x = QCoreApplication::applicationDirPath() + QDir::separator() + "rom_compressed";
         std::filesystem::remove(x.toStdString());

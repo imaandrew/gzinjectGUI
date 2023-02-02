@@ -3,20 +3,21 @@
 gzGUIWidget::gzGUIWidget(QWidget *parent) : QWidget(parent) {
     gzinject_gui = reinterpret_cast<gzinjectGUI*>(parent);
 
+    auto *og_wad_lbl = new QLabel("WAD File", this);
+    og_wad_lbl->setFixedHeight(20);
+    og_wad_path = new QLineEdit(this);
+    auto *og_wad_btn = new QPushButton("Browse...", this);
+    custom_cbox = new QCheckBox("Use a custom ROM", this);
+
     auto *og_rom_lbl = new QLabel("ROM File", this);
     og_rom_lbl->setFixedHeight(20);
     og_rom_path = new QLineEdit(this);
-    auto *og_rom_btn = new QPushButton("Browse...", this);
+    og_rom_btn = new QPushButton("Browse...", this);
 
     auto *og_patch_lbl = new QLabel("ROM Patch", this);
     og_patch_lbl->setFixedHeight(20);
     og_patch_path = new QLineEdit(this);
     auto *og_patch_btn = new QPushButton("Browse...", this);
-
-    auto *og_wad_lbl = new QLabel("WAD File", this);
-    og_wad_lbl->setFixedHeight(20);
-    og_wad_path = new QLineEdit(this);
-    auto *og_wad_btn = new QPushButton("Browse...", this);
 
     auto *output_lbl = new QLabel("Output Directory", this);
     output_lbl->setFixedHeight(20);
@@ -47,15 +48,16 @@ gzGUIWidget::gzGUIWidget(QWidget *parent) : QWidget(parent) {
     channel_info_grid->addWidget(channel_id_lbl, 0, 1);
     channel_info_grid->addWidget(channel_id, 1, 1);
 
+    box_layout->addWidget(og_wad_lbl);
+    box_layout->addWidget(og_wad_path);
+    box_layout->addWidget(og_wad_btn);
+    box_layout->addWidget(custom_cbox);
     box_layout->addWidget(og_rom_lbl);
     box_layout->addWidget(og_rom_path);
     box_layout->addWidget(og_rom_btn);
     box_layout->addWidget(og_patch_lbl);
     box_layout->addWidget(og_patch_path);
     box_layout->addWidget(og_patch_btn);
-    box_layout->addWidget(og_wad_lbl);
-    box_layout->addWidget(og_wad_path);
-    box_layout->addWidget(og_wad_btn);
     box_layout->addWidget(output_lbl);
     box_layout->addWidget(output_path);
     box_layout->addWidget(output_btn);
@@ -73,6 +75,10 @@ gzGUIWidget::gzGUIWidget(QWidget *parent) : QWidget(parent) {
     connect(output_btn, &QPushButton::released, this, &gzGUIWidget::output_btn_clicked);
     connect(generate_btn, &QPushButton::released, this, &gzGUIWidget::generate);
     connect(output_cbox, &QCheckBox::stateChanged, this, &gzGUIWidget::updateCheckBoxSetting);
+    connect(custom_cbox, &QCheckBox::stateChanged, this, &gzGUIWidget::updateCustomCheckBoxSetting);
+
+    og_rom_path->setEnabled(false);
+    og_rom_btn->setEnabled(false);
 }
 
 void gzGUIWidget::initializeSettings(QString setting, SettingType type) {
@@ -178,6 +184,16 @@ void gzGUIWidget::updateCheckBoxSetting(int state) {
         gzinject_gui->defineSetting("false", SettingType::OpenFolderWhenComplete);
 }
 
+void gzGUIWidget::updateCustomCheckBoxSetting(int state) {
+    if (state == Qt::Checked) {
+        og_rom_path->setEnabled(true);
+        og_rom_btn->setEnabled(true);
+    } else {
+        og_rom_path->setEnabled(false);
+        og_rom_btn->setEnabled(false);
+    }
+}
+
 void gzGUIWidget::generate() {
     QString channelTitle = nullptr;
     QString channelId = nullptr;
@@ -188,7 +204,12 @@ void gzGUIWidget::generate() {
         channelId = channel_id->text();
     if (!additional_args->text().isEmpty())
         additionalArgs = additional_args->text();
-    gzinject_gui->patchROM(og_rom_path->text(), og_patch_path->text(), QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64");
+    if (custom_cbox->isChecked())
+        gzinject_gui->patchROM(og_rom_path->text(), og_patch_path->text(), QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64");
+    else {
+        gzinject_gui->extractROM(og_wad_path->text(), QCoreApplication::applicationDirPath() + QDir::separator() + "decompressed_rom.z64");
+        gzinject_gui->patchROM(QCoreApplication::applicationDirPath() + QDir::separator() + "decompressed_rom.z64", og_patch_path->text(), QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64");
+    }
     gzinject_gui->injectWAD(QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64", og_wad_path->text(), output_path->text(), output_cbox->isChecked(), channelTitle, channelId, additionalArgs);
     gzinject_gui->cleanup();
 }
