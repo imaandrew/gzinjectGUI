@@ -195,6 +195,10 @@ void gzinjectGUI::applyPreset(Preset preset) {
         guiwidget->updateChannelId(preset.getChannelId());
     if (!preset.getChannelTitle().isEmpty())
         guiwidget->updateChannelTitle(preset.getChannelTitle());
+    if (!preset.getHomeboy().isEmpty())
+        addHomeboy(preset.getHomeboy());
+    if (!preset.getXdeltaPatch().isEmpty())
+        guiwidget->updateXdeltaPatch(preset.getXdeltaPatch());
     foreach(QString patch, preset.getPatches()) {
         applyPatch(patch);
     }
@@ -202,8 +206,15 @@ void gzinjectGUI::applyPreset(Preset preset) {
 
 void gzinjectGUI::applyPatch(QString filePath) {
     QString path = filePath.replace(" ", "\\ ");
-    guiwidget->clearArgs();
-    guiwidget->appendToArgs("-p " + path);
+    guiwidget->appendToArgs("-p " + path + " ");
+}
+
+void gzinjectGUI::addHomeboy(QString homeboyPath) {
+    QString path = homeboyPath.replace(" ", "\\ ");
+    guiwidget->appendToArgs("--dol-inject");
+    guiwidget->appendToArgs(homeboyPath);
+    guiwidget->appendToArgs("--dol-loading");
+    guiwidget->appendToArgs("90000800");
 }
 
 void gzinjectGUI::clearMiscArgs() {

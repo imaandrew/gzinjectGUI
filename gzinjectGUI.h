@@ -38,6 +38,7 @@ public:
         void showAboutWindow();
         void applyPatch();
         void applyPatch(QString filePath);
+        void addHomeboy(QString homeboyPath);
         void applyPreset(Preset preset);
         void clearMiscArgs();
     private:

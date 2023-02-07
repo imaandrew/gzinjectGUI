@@ -117,6 +117,14 @@ void gzGUIWidget::updateChannelTitle(QString channelTitle) {
     channel_title->setText(channelTitle);
 }
 
+void gzGUIWidget::updateXdeltaPatch(QString xdeltaPatch) {
+    og_patch_path->setText(xdeltaPatch);
+}
+
+void gzGUIWidget::updateHomeboyPath(QString homeboyPath) {
+    homeboy = homeboyPath;
+}
+
 void gzGUIWidget::rom_btn_clicked() {
     QString romPath;
     if (defaultRomSearchPath.isEmpty())
@@ -139,7 +147,7 @@ void gzGUIWidget::patch_btn_clicked() {
     QString patchPath;
     patchPath = handleFileDialog("Open Patch", "XDelta3 Patch Files (*.xdelta)");
     if (!patchPath.isEmpty()) {
-        og_patch_path->setText(patchPath);
+        updateXdeltaPatch(patchPath);
     }
 }
 

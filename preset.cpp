@@ -3,7 +3,7 @@
 Preset::Preset(QString filename) {
     QFile file(filename);
     QFileInfo fileInfo(filename);
-    absolutePath = fileInfo.absoluteDir().absolutePath();
+    absolutePath = QCoreApplication::applicationDirPath();
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QString file_text = file.readAll();
     file.close();
@@ -14,6 +14,8 @@ Preset::Preset(QString filename) {
     name = object.value("name").toString(nullptr);
     channelId = object.value("channelId").toString(nullptr);
     channelTitle = object.value("channelTitle").toString(nullptr);
+    homeboy = absolutePathOfPatch(object.value("homeboyPath").toString(nullptr));
+    xdeltaPatch = absolutePathOfPatch(object.value("xdeltaPatch").toString(nullptr));
     QJsonArray patch_array = object.value("patches").toArray();
     QJsonArray autoload_array = object.value("autoload").toArray();
     
@@ -58,6 +60,14 @@ QString Preset::getChannelId() {
 
 QString Preset::getChannelTitle() {
     return channelTitle;
+}
+
+QString Preset::getHomeboy() {
+    return homeboy;
+}
+
+QString Preset::getXdeltaPatch() {
+    return xdeltaPatch;
 }
 
 QStringList Preset::getPatches() {

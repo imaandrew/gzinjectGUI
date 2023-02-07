@@ -4,6 +4,9 @@
     "channelId": "FPUS",
     "channelTitle": "fp-US",
     "patches": [
-        "./mem_patch.gzi"
-    ]
+        "./patches/mem_patch.gzi",
+        "./patches/hb-NAEE/hb_NAEE.gzi"
+    ],
+    "xdeltaPatch": "./patches/fp-us.xdelta",
+    "homeboyPath": "./patches/hb-NAEE/homeboy.bin"
 }

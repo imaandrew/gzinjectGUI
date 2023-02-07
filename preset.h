@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QCoreApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -19,6 +20,8 @@ class Preset {
         QString getName();
         QString getChannelId();
         QString getChannelTitle();
+        QString getHomeboy();
+        QString getXdeltaPatch();
         QStringList getPatches();
         
         bool testRomString(QString romName);
@@ -29,7 +32,10 @@ class Preset {
         QString name;
         QString channelId;
         QString channelTitle;
+        QString homeboy;
+        QString xdeltaPatch;
         QStringList patches;
         QStringList autoLoad;
         QString absolutePath;
+        QString applicationPath;
 };

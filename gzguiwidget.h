@@ -24,6 +24,8 @@ class gzGUIWidget : public QWidget {
         void initializeSettings(QString setting, SettingType type);
         void updateChannelId(QString channelId);
         void updateChannelTitle(QString channelTitle);
+        void updateXdeltaPatch(QString xdeltaPatch);
+        void updateHomeboyPath(QString homeboyPath);
         void clearArgs();
     private slots:
         void rom_btn_clicked();
@@ -42,6 +44,7 @@ class gzGUIWidget : public QWidget {
         QLineEdit *og_rom_path;
         QPushButton *og_rom_btn;
         QLineEdit *og_patch_path;
+        QString homeboy;
         QLineEdit *og_wad_path;
         QLineEdit *output_path;
         QLineEdit *channel_title;

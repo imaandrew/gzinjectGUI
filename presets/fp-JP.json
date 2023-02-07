@@ -4,6 +4,9 @@
     "channelId": "FPJP",
     "channelTitle": "fp-JP",
     "patches": [
-        "./mem_patch.gzi"
-    ]
+        "./patches/mem_patch.gzi",
+        "./patches/hb-NAEJ/hb_NAEJ.gzi"
+    ],
+    "xdeltaPatch": "./patches/fp-jp.xdelta",
+    "homeboyPath": "./patches/hb-NAEJ/homeboy.bin"
 }
