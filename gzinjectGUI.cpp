@@ -309,6 +309,9 @@ void gzinjectGUI::extractROM(QString wadPath, QString outPath) {
         failedCommand.setIcon(QMessageBox::Critical);
         failedCommand.exec();
     }
+
+    QDir extract(appPath + QDir::separator() + "wadextract");
+    extract.removeRecursively();
 }
 
 void gzinjectGUI::patchROM(QString romPath, QString patchPath, QString outPath) {
@@ -372,9 +375,9 @@ void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath
 
 void gzinjectGUI::cleanup() {
     try {
-        QString x = appPath + QDir::separator() + "patched_rom.z64";
+        QString x = appPath + QDir::separator() + "rom_patched";
         std::filesystem::remove(x.toStdString());
-        x = appPath + QDir::separator() + "decompressed_rom.z64";
+        x = appPath + QDir::separator() + "rom_decompressed";
         std::filesystem::remove(x.toStdString());
         x = appPath + QDir::separator() + "rom_compressed";
         std::filesystem::remove(x.toStdString());
