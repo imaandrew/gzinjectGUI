@@ -202,6 +202,10 @@ void gzGUIWidget::updateCustomCheckBoxSetting(int state) {
     }
 }
 
+void gzGUIWidget::setAppPath(QString path) {
+    appPath = path;
+}
+
 void gzGUIWidget::generate() {
     QString channelTitle = nullptr;
     QString channelId = nullptr;
@@ -213,11 +217,11 @@ void gzGUIWidget::generate() {
     if (!additional_args->text().isEmpty())
         additionalArgs = additional_args->text();
     if (custom_cbox->isChecked())
-        gzinject_gui->patchROM(og_rom_path->text(), og_patch_path->text(), QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64");
+        gzinject_gui->patchROM(og_rom_path->text(), og_patch_path->text(), appPath + QDir::separator() + "patched_rom.z64");
     else {
-        gzinject_gui->extractROM(og_wad_path->text(), QCoreApplication::applicationDirPath() + QDir::separator() + "decompressed_rom.z64");
-        gzinject_gui->patchROM(QCoreApplication::applicationDirPath() + QDir::separator() + "decompressed_rom.z64", og_patch_path->text(), QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64");
+        gzinject_gui->extractROM(og_wad_path->text(), appPath + QDir::separator() + "decompressed_rom.z64");
+        gzinject_gui->patchROM(appPath + QDir::separator() + "decompressed_rom.z64", og_patch_path->text(), appPath + QDir::separator() + "patched_rom.z64");
     }
-    gzinject_gui->injectWAD(QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64", og_wad_path->text(), output_path->text(), output_cbox->isChecked(), channelTitle, channelId, additionalArgs);
+    gzinject_gui->injectWAD(appPath + QDir::separator() + "patched_rom.z64", og_wad_path->text(), output_path->text(), output_cbox->isChecked(), channelTitle, channelId, additionalArgs);
     gzinject_gui->cleanup();
 }

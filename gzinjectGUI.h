@@ -63,5 +63,6 @@ public:
         QMessageBox pathnotfound;
         QMessageBox xdeltanotfound;
         QMessageBox aboutwindow;
+        QString appPath;
 
 };

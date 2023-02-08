@@ -13,6 +13,13 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
     gzinjectPath = initializeGzPath();
     xdeltaPath = initializeXdeltaPath();
 
+    #ifdef Q_OS_MACOS
+    appPath = QCoreApplication::applicationDirPath().split(".app")[0];
+    appPath.truncate(appPath.lastIndexOf('/'));
+    #else
+    appPath = QCoreApplication::applicationDirPath();
+    #endif
+
     aboutwindow.setText("About gzinjectGUI");
     remakeAboutWindow();
     pathnotfound.setText("gzinject not found");
@@ -283,7 +290,7 @@ void gzinjectGUI::extractROM(QString wadPath, QString outPath) {
     if (!common_key.exists())
         executeCommand({"-a", "genkey"}, true);
     
-    CommandOutput output = executeCommand({"-a", "extract", "-w", wadPath});
+    CommandOutput output = executeCommand({"-a", "extract", "-w", wadPath, "-d", appPath + QDir::separator() + "wadextract"});
     if (output.getExitCode() != 0) {
         QMessageBox failedCommand;
         failedCommand.setText("Command failed with exit code " + QString::number(output.getExitCode()));
@@ -292,7 +299,7 @@ void gzinjectGUI::extractROM(QString wadPath, QString outPath) {
         failedCommand.exec();
     }
 
-    QString romPath = QCoreApplication::applicationDirPath() + QDir::separator() + "wadextract" + QDir::separator() + "content5" + QDir::separator() + "romc";
+    QString romPath = appPath + QDir::separator() + "wadextract" + QDir::separator() + "content5" + QDir::separator() + "romc";
     output = executeCommand({"-a", "romc", "-m", romPath, "-o", outPath});
     if (output.getExitCode() != 0) {
         QMessageBox failedCommand;
@@ -364,11 +371,11 @@ void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath
 
 void gzinjectGUI::cleanup() {
     try {
-        QString x = QCoreApplication::applicationDirPath() + QDir::separator() + "patched_rom.z64";
+        QString x = appPath + QDir::separator() + "patched_rom.z64";
         std::filesystem::remove(x.toStdString());
-        x = QCoreApplication::applicationDirPath() + QDir::separator() + "decompressed_rom.z64";
+        x = appPath + QDir::separator() + "decompressed_rom.z64";
         std::filesystem::remove(x.toStdString());
-        x = QCoreApplication::applicationDirPath() + QDir::separator() + "rom_compressed";
+        x = appPath + QDir::separator() + "rom_compressed";
         std::filesystem::remove(x.toStdString());
     }
     catch(const std::filesystem::filesystem_error& err) {

@@ -26,6 +26,7 @@ class gzGUIWidget : public QWidget {
         void updateChannelTitle(QString channelTitle);
         void updateXdeltaPatch(QString xdeltaPatch);
         void updateHomeboyPath(QString homeboyPath);
+        void setAppPath(QString path);
         void clearArgs();
     private slots:
         void rom_btn_clicked();
@@ -52,4 +53,5 @@ class gzGUIWidget : public QWidget {
         QLineEdit *additional_args;
         QCheckBox *output_cbox;
         QCheckBox *custom_cbox;
+        QString appPath;
 };
