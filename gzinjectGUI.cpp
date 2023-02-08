@@ -31,6 +31,7 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
 
 
     guiwidget = new gzGUIWidget(this);
+    guiwidget->setAppPath(appPath);
 
     QString openFolderSetting = "";
     if (settings->value("file/openFolderWhenComplete").toBool())
