@@ -30,7 +30,7 @@ fpInject::fpInject(QWidget *parent) : QMainWindow(parent) {
     xdeltanotfound.setIcon(QMessageBox::Critical);
 
 
-    guiwidget = new gzGUIWidget(this);
+    guiwidget = new fpGUIWidget(this);
     guiwidget->setAppPath(appPath);
 
     QString openFolderSetting = "";
