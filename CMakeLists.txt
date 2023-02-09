@@ -19,7 +19,7 @@ add_compile_definitions(GIT_VERSION=${GIT_VERSION})
 if (APPLE)
 set(MACOSX_BUNDLE_ICON_FILE icon.icns)
 set(app_icon "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.icns")
-set_source_files_properties(${app_icon_macos} PROPERTIES
+set_source_files_properties(${app_icon} PROPERTIES
        MACOSX_PACKAGE_LOCATION "Resources")
 elseif(WIN32)
 set(app_icon "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.rc")
