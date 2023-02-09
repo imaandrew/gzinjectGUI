@@ -16,6 +16,7 @@ Preset::Preset(QString filename) {
     channelTitle = object.value("channelTitle").toString(nullptr);
     homeboy = absolutePathOfPatch(object.value("homeboyPath").toString(nullptr));
     xdeltaPatch = absolutePathOfPatch(object.value("xdeltaPatch").toString(nullptr));
+    md5 = object.value("md5").toString(nullptr).toLower();
     QJsonArray patch_array = object.value("patches").toArray();
     QJsonArray autoload_array = object.value("autoload").toArray();
     
@@ -44,6 +45,17 @@ bool Preset::testRomString(QString romName) {
             return true;
     }
     return false;
+}
+
+bool Preset::testHash(QString wadPath) {
+    QFile file(wadPath);
+    if (!file.open(QFile::ReadOnly)) {
+        qDebug() << "Could not open file";
+        return false;
+    }
+
+    QByteArray hash = QCryptographicHash::hash(file.readAll(), QCryptographicHash::Md5);
+    return md5 == hash.toHex().constData();
 }
 
 QString Preset::getVersion() {

@@ -31,6 +31,7 @@ public:
         void extractROM(QString wadPath, QString outPath);
         void defineSetting(QString setting, SettingType type);
         void checkAutoLoad(QFileInfo rom);
+        void checkAutoLoadWad(QFileInfo wad);
         void cleanup();
     private slots:
         void quitMainWindow();

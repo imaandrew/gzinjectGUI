@@ -11,6 +11,8 @@
 #include <QDir>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
+#include <QCryptographicHash>
+#include <QTextStream>
 
 class Preset {
     public:
@@ -25,6 +27,7 @@ class Preset {
         QStringList getPatches();
         
         bool testRomString(QString romName);
+        bool testHash(QString wadPath);
     private:
         QString absolutePathOfPatch(QString patchPath);
 
@@ -34,6 +37,7 @@ class Preset {
         QString channelTitle;
         QString homeboy;
         QString xdeltaPatch;
+        QString md5;
         QStringList patches;
         QStringList autoLoad;
         QString absolutePath;

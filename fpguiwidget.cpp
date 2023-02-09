@@ -160,7 +160,9 @@ void fpGUIWidget::wad_btn_clicked() {
         wadPath = handleFileDialog("Open WAD", "WAD Files (*.wad)", wad_path.absoluteDir().absolutePath());
     }
     if (!wadPath.isEmpty()) {
+        QFileInfo wad_path(wadPath);
         og_wad_path->setText(wadPath);
+        fpinject_gui->checkAutoLoadWad(wad_path);
         fpinject_gui->defineSetting(wadPath, SettingType::WadPath);
     }
 }

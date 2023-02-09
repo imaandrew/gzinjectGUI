@@ -8,5 +8,6 @@
         "./patches/hb-NAEE/hb_NAEE.gzi"
     ],
     "xdeltaPatch": "./patches/fp-us.xdelta",
-    "homeboyPath": "./patches/hb-NAEE/homeboy.bin"
+    "homeboyPath": "./patches/hb-NAEE/homeboy.bin",
+    "md5": "2aad94a7fa5f05c7544ddc0dd269c366"
 }

@@ -157,6 +157,15 @@ void fpInject::checkAutoLoad(QFileInfo rom) {
     }
 }
 
+void fpInject::checkAutoLoadWad(QFileInfo wad) {
+    foreach (Preset preset, presets) {
+        if (preset.testHash(wad.absoluteFilePath())) {
+            applyPreset(preset);
+            break;
+        }
+    }
+}
+
 CommandOutput fpInject::executeCommand(QStringList arguments, bool isCommonKey) {
     if (gzinjectPath.isEmpty()) { return CommandOutput(-1, nullptr, nullptr); }
     QProcess process;
