@@ -2,13 +2,13 @@
 #include <QDebug>
 #include <QStyleFactory>
 
-#include "gzinjectGUI.h"
+#include "fpInject.h"
 
 #define _STR(x) #x
 #define STRINGIFY(x)  _STR(x)
 
-gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
-    settings = new QSettings("Mini's Applications", "gzinjectGUI");
+fpInject::fpInject(QWidget *parent) : QMainWindow(parent) {
+    settings = new QSettings("fp devs", "fpInject");
     resize(300, 500);
     gzinjectPath = initializeGzPath();
     xdeltaPath = initializeXdeltaPath();
@@ -20,7 +20,7 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
     appPath = QCoreApplication::applicationDirPath();
     #endif
 
-    aboutwindow.setText("About gzinjectGUI");
+    aboutwindow.setText("About fpInject");
     remakeAboutWindow();
     pathnotfound.setText("gzinject not found");
     pathnotfound.setInformativeText("gzinject could not be found, either the executable was not included in the download, or the path set by the user no longer exists. This can be corrected by either putting gzinject in \"tools/gzinject\", or manually setting a path in File -> Set gzinject Path.");
@@ -65,7 +65,7 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
     help->addAction(about_item);
 
     setCentralWidget(guiwidget);
-    setWindowTitle("gzinjectGUI");
+    setWindowTitle("fpInject");
 
     if (gzinjectPath.isNull())
         pathnotfound.exec();
@@ -83,7 +83,7 @@ gzinjectGUI::gzinjectGUI(QWidget *parent) : QMainWindow(parent) {
     connect(clear_misc_args, SIGNAL(triggered()), this, SLOT(clearMiscArgs()));
 }
 
-bool gzinjectGUI::isGzIncluded() {
+bool fpInject::isGzIncluded() {
     QString extension = "";
     #if defined(Q_OS_WIN)
     extension = ".exe";
@@ -92,7 +92,7 @@ bool gzinjectGUI::isGzIncluded() {
     return included_gz.exists();
 }
 
-bool gzinjectGUI::isXdeltaIncluded() {
+bool fpInject::isXdeltaIncluded() {
     QString extension = "";
 #if defined(Q_OS_WIN)
     extension = ".exe";
@@ -101,7 +101,7 @@ bool gzinjectGUI::isXdeltaIncluded() {
     return included_xdelta.exists();
 }
 
-QString gzinjectGUI::initializeGzPath() {
+QString fpInject::initializeGzPath() {
     QString path = settings->value("file/gzpath").toString();
     if (!path.isEmpty() && QFileInfo(path).exists())
         return path;
@@ -111,14 +111,14 @@ QString gzinjectGUI::initializeGzPath() {
         return nullptr;
 }
 
-QString gzinjectGUI::initializeXdeltaPath() {
+QString fpInject::initializeXdeltaPath() {
     if (isXdeltaIncluded())
         return QCoreApplication::applicationDirPath() + QDir::separator() + "tools/xdelta3";
     else
         return nullptr;
 }
 
-void gzinjectGUI::initializePresets() {
+void fpInject::initializePresets() {
     presets_menu->clear();
     QList<QAction*> preset_actions;
     QList<QAction*> gzi_files;
@@ -149,7 +149,7 @@ void gzinjectGUI::initializePresets() {
     }
 }
 
-void gzinjectGUI::checkAutoLoad(QFileInfo rom) {
+void fpInject::checkAutoLoad(QFileInfo rom) {
     foreach (Preset preset, presets) {
         if (preset.testRomString(rom.fileName())) {
             applyPreset(preset);
@@ -157,7 +157,7 @@ void gzinjectGUI::checkAutoLoad(QFileInfo rom) {
     }
 }
 
-CommandOutput gzinjectGUI::executeCommand(QStringList arguments, bool isCommonKey) {
+CommandOutput fpInject::executeCommand(QStringList arguments, bool isCommonKey) {
     if (gzinjectPath.isEmpty()) { return CommandOutput(-1, nullptr, nullptr); }
     QProcess process;
     process.setWorkingDirectory(QCoreApplication::applicationDirPath());
@@ -168,15 +168,15 @@ CommandOutput gzinjectGUI::executeCommand(QStringList arguments, bool isCommonKe
     return CommandOutput(process.exitCode(), process.readAllStandardOutput(), process.readAllStandardError());
 }
 
-void gzinjectGUI::quitMainWindow() {
+void fpInject::quitMainWindow() {
     this->close();
 }
 
-void gzinjectGUI::showAboutWindow() {
+void fpInject::showAboutWindow() {
     aboutwindow.exec();
 }
 
-QString gzinjectGUI::gzinjectVersion() {
+QString fpInject::gzinjectVersion() {
     CommandOutput version = executeCommand({"--version"});
     QStringList output = version.getStandardOut().split(" ");
     int version_text = output.lastIndexOf("Version");
@@ -186,11 +186,11 @@ QString gzinjectGUI::gzinjectVersion() {
         return "";
 }
 
-void gzinjectGUI::remakeAboutWindow() {
-    aboutwindow.setInformativeText("gzinject Version: " + gzinjectVersion() + "\ngzinject Path: " + gzinjectPath + "\n\nGit Commit: " + QString(STRINGIFY(GIT_VERSION)) + "\nOS: " + QSysInfo::prettyProductName() + " (" + QSysInfo::currentCpuArchitecture() + ")\n\nMade by Mini / Amy\ngzinject made by krimtonz");
+void fpInject::remakeAboutWindow() {
+    aboutwindow.setInformativeText("gzinject Version: " + gzinjectVersion() + "\ngzinject Path: " + gzinjectPath + "\n\nGit Commit: " + QString(STRINGIFY(GIT_VERSION)) + "\nOS: " + QSysInfo::prettyProductName() + " (" + QSysInfo::currentCpuArchitecture() + ")\n\nMade by Andrew / Lenin\ngzinjectGUI made by Mini / Amy\ngzinject made by krimtonz");
 }
 
-void gzinjectGUI::setGzPath() {
+void fpInject::setGzPath() {
     QString path = QFileDialog::getOpenFileName(this, "Open File", QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     if (path.isEmpty()) { return; }
     settings->setValue("file/gzpath", path);
@@ -198,7 +198,7 @@ void gzinjectGUI::setGzPath() {
     remakeAboutWindow();
 }
 
-void gzinjectGUI::applyPreset(Preset preset) {
+void fpInject::applyPreset(Preset preset) {
     if (!preset.getChannelId().isEmpty())
         guiwidget->updateChannelId(preset.getChannelId());
     if (!preset.getChannelTitle().isEmpty())
@@ -212,12 +212,12 @@ void gzinjectGUI::applyPreset(Preset preset) {
     }
 }
 
-void gzinjectGUI::applyPatch(QString filePath) {
+void fpInject::applyPatch(QString filePath) {
     QString path = filePath.replace(" ", "\\ ");
     guiwidget->appendToArgs("-p " + path + " ");
 }
 
-void gzinjectGUI::addHomeboy(QString homeboyPath) {
+void fpInject::addHomeboy(QString homeboyPath) {
     QString path = homeboyPath.replace(" ", "\\ ");
     guiwidget->appendToArgs("--dol-inject");
     guiwidget->appendToArgs(homeboyPath);
@@ -225,19 +225,19 @@ void gzinjectGUI::addHomeboy(QString homeboyPath) {
     guiwidget->appendToArgs("90000800");
 }
 
-void gzinjectGUI::clearMiscArgs() {
+void fpInject::clearMiscArgs() {
     guiwidget->updateChannelTitle("");
     guiwidget->updateChannelId("");
     guiwidget->clearArgs();
 }
 
-void gzinjectGUI::applyPatch() {
+void fpInject::applyPatch() {
     QString path = QFileDialog::getOpenFileName(this, "Open File", QStandardPaths::writableLocation(QStandardPaths::HomeLocation), "GZI Files (*.gzi);;All Files (*)");
     if (path.isEmpty()) { return; }
     applyPatch(path);
 }
 
-void gzinjectGUI::openFileLocation(QString path) {
+void fpInject::openFileLocation(QString path) {
     /* https://stackoverflow.com/a/46019091
      Doesn't have Linux support because file browsers are funny. That final catch at the end is "good enough" for Linux users.
      TODO: add something in for GNOME (nautilus) or KDE (dolphin).
@@ -269,7 +269,7 @@ void gzinjectGUI::openFileLocation(QString path) {
         QDesktopServices::openUrl(QUrl::fromLocalFile(info.isDir()? path : info.path()));
 }
 
-void gzinjectGUI::defineSetting(QString setting, SettingType type) {
+void fpInject::defineSetting(QString setting, SettingType type) {
     switch(type) {
         case SettingType::RomPath:
             settings->setValue("file/romPath", setting);
@@ -286,7 +286,7 @@ void gzinjectGUI::defineSetting(QString setting, SettingType type) {
     }
 }
 
-void gzinjectGUI::extractROM(QString wadPath, QString outPath) {
+void fpInject::extractROM(QString wadPath, QString outPath) {
     QFileInfo common_key(QCoreApplication::applicationDirPath() + QDir::separator() +  "common-key.bin");
     if (!common_key.exists())
         executeCommand({"-a", "genkey"}, true);
@@ -314,7 +314,7 @@ void gzinjectGUI::extractROM(QString wadPath, QString outPath) {
     extract.removeRecursively();
 }
 
-void gzinjectGUI::patchROM(QString romPath, QString patchPath, QString outPath) {
+void fpInject::patchROM(QString romPath, QString patchPath, QString outPath) {
     QStringList arguments;
     arguments << "-d" << "-f" << "-s" << romPath << patchPath << outPath;
 
@@ -331,7 +331,7 @@ void gzinjectGUI::patchROM(QString romPath, QString patchPath, QString outPath) 
     }
 }
 
-void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath, bool openFolderWhenComplete, QString title, QString channel_id, QString additional_args) {
+void fpInject::injectWAD(QString romPath, QString wadPath, QString outputPath, bool openFolderWhenComplete, QString title, QString channel_id, QString additional_args) {
     QFileInfo common_key(QCoreApplication::applicationDirPath() + QDir::separator() +  "common-key.bin");
     if (!common_key.exists())
         executeCommand({"-a", "genkey"}, true);
@@ -373,7 +373,7 @@ void gzinjectGUI::injectWAD(QString romPath, QString wadPath, QString outputPath
     }
 }
 
-void gzinjectGUI::cleanup() {
+void fpInject::cleanup() {
     try {
         QString x = appPath + QDir::separator() + "rom_patched";
         std::filesystem::remove(x.toStdString());

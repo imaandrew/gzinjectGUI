@@ -25,11 +25,11 @@ jobs:
       - name: Configure CMake
         run: cmake -B build -DCMAKE_INSTALL_PREFIX="$(Get-Location)" -DCMAKE_PREFIX_PATH="${env:GITHUB_WORKSPACE}\qt_6.4.2\" .
 
-      - name: Build gzinjectGUI
+      - name: Build fpInject
         run: |
           cmake --build build --config Release
           cmake --install build --strip --config Release
-          .\qt_6.4.2\bin\windeployqt.exe --no-svg --no-opengl --no-opengl-sw --no-compiler-runtime --no-system-d3d-compiler bin/gzinjectGUI.exe
+          .\qt_6.4.2\bin\windeployqt.exe --no-svg --no-opengl --no-opengl-sw --no-compiler-runtime --no-system-d3d-compiler bin/fpInject.exe
 
       - name: Build gzinject
         shell: msys2 {0}
@@ -58,7 +58,7 @@ jobs:
       - name: Upload files
         uses: actions/upload-artifact@v3
         with:
-          name: gzinjectGUI-Windows_x64
+          name: fpInject-Windows_x64
           path: bin
 
   build-macos:
@@ -81,7 +81,7 @@ jobs:
       - name: Configure CMake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.
 
-      - name: Build gzinjectGUI
+      - name: Build fpInject
         run: |
           cmake --build build --config Release
           cmake --install build --strip --config Release
@@ -102,19 +102,19 @@ jobs:
 
       - name: Copy files
         run: |
-          mkdir bin/gzinjectGUI.app/Contents/MacOS/tools
-          cp gzinject/gzinject bin/gzinjectGUI.app/Contents/MacOS/tools
-          cp xdelta/build/xdelta3 bin/gzinjectGUI.app/Contents/MacOS/tools
-          cp -r presets bin/gzinjectGUI.app/Contents/MacOS/presets
+          mkdir bin/fpInject.app/Contents/MacOS/tools
+          cp gzinject/gzinject bin/fpInject.app/Contents/MacOS/tools
+          cp xdelta/build/xdelta3 bin/fpInject.app/Contents/MacOS/tools
+          cp -r presets bin/fpInject.app/Contents/MacOS/presets
 
       - name: Deploy
         run: |
           cd bin
-          macdeployqt gzinjectGUI.app -dmg
+          macdeployqt fpInject.app -dmg
 
       - name: Upload files
         uses: actions/upload-artifact@v3
         with:
-          name: gzinjectGUI-macOS
-          path: bin/gzinjectGUI.dmg
+          name: fpInject-macOS
+          path: bin/fpInject.dmg
       

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gzinjectGUI.h"
+#include "fpInject.h"
 #include "settingtype.h"
 
 #include <QWidget>
@@ -13,13 +13,13 @@
 #include <QCheckBox>
 #include <QStandardPaths>
 
-class gzinjectGUI;
+class fpInject;
 
-class gzGUIWidget : public QWidget {
+class fpGUIWidget : public QWidget {
     Q_OBJECT
 
     public:
-        gzGUIWidget(QWidget *parent = nullptr);
+        fpGUIWidget(QWidget *parent = nullptr);
         void appendToArgs(QString argument);
         void initializeSettings(QString setting, SettingType type);
         void updateChannelId(QString channelId);
@@ -37,7 +37,7 @@ class gzGUIWidget : public QWidget {
         void updateCheckBoxSetting(int state);
         void updateCustomCheckBoxSetting(int state);
     private:
-        gzinjectGUI *gzinject_gui;
+        fpInject *fpinject_gui;
         QString handleFileDialog(QString windowTitle = "Select File", QString fileType = "Any File (*)", QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
 
         QString defaultRomSearchPath;

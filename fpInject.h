@@ -1,7 +1,7 @@
 #pragma once
 
 #include "commandOutput.h"
-#include "gzguiwidget.h"
+#include "fpguiwidget.h"
 #include "settingtype.h"
 #include "preset.h"
 
@@ -18,14 +18,14 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 
-class gzGUIWidget;
+class fpGUIWidget;
 class Preset;
 
-class gzinjectGUI : public QMainWindow {
+class fpInject : public QMainWindow {
     Q_OBJECT
 
 public:
-        gzinjectGUI(QWidget *parent = nullptr);
+        fpInject(QWidget *parent = nullptr);
         void injectWAD(QString romPath, QString wadPath, QString outputPath, bool openFolderWhenComplete, QString title = nullptr, QString channel_id = nullptr, QString additional_args = nullptr);
         void patchROM(QString romPath, QString patchPath, QString outPath);
         void extractROM(QString wadPath, QString outPath);
@@ -42,7 +42,7 @@ public:
         void applyPreset(Preset preset);
         void clearMiscArgs();
     private:
-        gzGUIWidget *guiwidget;
+        fpGUIWidget *guiwidget;
         CommandOutput executeCommand(QStringList arguments, bool isCommonKey = false);
         void openFileLocation(QString path);
         QString initializeGzPath();

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(gzinjectGUI VERSION 1.0.0 LANGUAGES CXX)
+project(fpInject VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -16,27 +16,37 @@ execute_process(
 )
 add_compile_definitions(GIT_VERSION=${GIT_VERSION})
 
-add_executable(gzinjectGUI
+if (APPLE)
+set(MACOSX_BUNDLE_ICON_FILE icon.icns)
+set(app_icon "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.icns")
+set_source_files_properties(${app_icon_macos} PROPERTIES
+       MACOSX_PACKAGE_LOCATION "Resources")
+elseif(WIN32)
+set(app_icon "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.rc")
+endif()
+
+qt_add_executable(fpInject
         main.cpp
-        gzinjectGUI.cpp
+        fpInject.cpp
         commandOutput.cpp
-        gzguiwidget.cpp
+        fpguiwidget.cpp
 	preset.cpp
+	${app_icon}
 )
 
-target_link_libraries(gzinjectGUI PRIVATE Qt6::Widgets)
+target_link_libraries(fpInject PRIVATE Qt6::Widgets)
 
-set_target_properties(gzinjectGUI PROPERTIES
+set_target_properties(fpInject PROPERTIES
     WIN32_EXECUTABLE ON
     MACOSX_BUNDLE ON
 )
 
 if(APPLE)
-add_custom_command(TARGET gzinjectGUI
+add_custom_command(TARGET fpInject
       POST_BUILD COMMAND
       ${CMAKE_INSTALL_NAME_TOOL} -add_rpath "@executable_path/../Frameworks/"
-      $<TARGET_FILE:gzinjectGUI>)
+      $<TARGET_FILE:fpInject>)
 endif()
 
-install(TARGETS gzinjectGUI
+install(TARGETS fpInject
   RUNTIME DESTINATION bin BUNDLE DESTINATION bin)

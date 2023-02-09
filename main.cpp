@@ -1,9 +1,9 @@
-#include "gzinjectGUI.h"
+#include "fpInject.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
-    gzinjectGUI window;
+    fpInject window;
 
     window.show();
 

@@ -1,7 +1,7 @@
-#include "gzguiwidget.h"
+#include "fpguiwidget.h"
 
-gzGUIWidget::gzGUIWidget(QWidget *parent) : QWidget(parent) {
-    gzinject_gui = reinterpret_cast<gzinjectGUI*>(parent);
+fpGUIWidget::fpGUIWidget(QWidget *parent) : QWidget(parent) {
+    fpinject_gui = reinterpret_cast<fpInject*>(parent);
 
     auto *og_wad_lbl = new QLabel("WAD File", this);
     og_wad_lbl->setFixedHeight(20);
@@ -69,19 +69,19 @@ gzGUIWidget::gzGUIWidget(QWidget *parent) : QWidget(parent) {
 
     setLayout(box_layout);
 
-    connect(og_rom_btn, &QPushButton::released, this, &gzGUIWidget::rom_btn_clicked);
-    connect(og_patch_btn, &QPushButton::released, this, &gzGUIWidget::patch_btn_clicked);
-    connect(og_wad_btn, &QPushButton::released, this, &gzGUIWidget::wad_btn_clicked);
-    connect(output_btn, &QPushButton::released, this, &gzGUIWidget::output_btn_clicked);
-    connect(generate_btn, &QPushButton::released, this, &gzGUIWidget::generate);
-    connect(output_cbox, &QCheckBox::stateChanged, this, &gzGUIWidget::updateCheckBoxSetting);
-    connect(custom_cbox, &QCheckBox::stateChanged, this, &gzGUIWidget::updateCustomCheckBoxSetting);
+    connect(og_rom_btn, &QPushButton::released, this, &fpGUIWidget::rom_btn_clicked);
+    connect(og_patch_btn, &QPushButton::released, this, &fpGUIWidget::patch_btn_clicked);
+    connect(og_wad_btn, &QPushButton::released, this, &fpGUIWidget::wad_btn_clicked);
+    connect(output_btn, &QPushButton::released, this, &fpGUIWidget::output_btn_clicked);
+    connect(generate_btn, &QPushButton::released, this, &fpGUIWidget::generate);
+    connect(output_cbox, &QCheckBox::stateChanged, this, &fpGUIWidget::updateCheckBoxSetting);
+    connect(custom_cbox, &QCheckBox::stateChanged, this, &fpGUIWidget::updateCustomCheckBoxSetting);
 
     og_rom_path->setEnabled(false);
     og_rom_btn->setEnabled(false);
 }
 
-void gzGUIWidget::initializeSettings(QString setting, SettingType type) {
+void fpGUIWidget::initializeSettings(QString setting, SettingType type) {
     switch(type) {
         case SettingType::RomPath:
             defaultRomSearchPath = setting;
@@ -98,34 +98,34 @@ void gzGUIWidget::initializeSettings(QString setting, SettingType type) {
     }
 }
 
-void gzGUIWidget::appendToArgs(QString argument) {
+void fpGUIWidget::appendToArgs(QString argument) {
     QString args_text = additional_args->text();
     args_text += " " + argument;
     args_text = args_text.trimmed();
     additional_args->setText(args_text);
 }
 
-void gzGUIWidget::clearArgs() {
+void fpGUIWidget::clearArgs() {
     additional_args->setText("");
 }
 
-void gzGUIWidget::updateChannelId(QString channelId) {
+void fpGUIWidget::updateChannelId(QString channelId) {
     channel_id->setText(channelId);
 }
 
-void gzGUIWidget::updateChannelTitle(QString channelTitle) {
+void fpGUIWidget::updateChannelTitle(QString channelTitle) {
     channel_title->setText(channelTitle);
 }
 
-void gzGUIWidget::updateXdeltaPatch(QString xdeltaPatch) {
+void fpGUIWidget::updateXdeltaPatch(QString xdeltaPatch) {
     og_patch_path->setText(xdeltaPatch);
 }
 
-void gzGUIWidget::updateHomeboyPath(QString homeboyPath) {
+void fpGUIWidget::updateHomeboyPath(QString homeboyPath) {
     homeboy = homeboyPath;
 }
 
-void gzGUIWidget::rom_btn_clicked() {
+void fpGUIWidget::rom_btn_clicked() {
     QString romPath;
     if (defaultRomSearchPath.isEmpty())
         romPath = handleFileDialog("Open ROM", "N64 Files (*.z64 *.n64 *.v64)");
@@ -136,14 +136,14 @@ void gzGUIWidget::rom_btn_clicked() {
         QFileInfo rom_path(romPath);
         if (output_path->text().isEmpty()) {
             output_path->setText(rom_path.absoluteDir().absolutePath());
-            gzinject_gui->defineSetting(rom_path.absoluteDir().absolutePath(), SettingType::OutputPath);
+            fpinject_gui->defineSetting(rom_path.absoluteDir().absolutePath(), SettingType::OutputPath);
         }
-        gzinject_gui->checkAutoLoad(rom_path);
-        gzinject_gui->defineSetting(rom_path.absoluteDir().absolutePath(), SettingType::RomPath);
+        fpinject_gui->checkAutoLoad(rom_path);
+        fpinject_gui->defineSetting(rom_path.absoluteDir().absolutePath(), SettingType::RomPath);
     }
 }
 
-void gzGUIWidget::patch_btn_clicked() {
+void fpGUIWidget::patch_btn_clicked() {
     QString patchPath;
     patchPath = handleFileDialog("Open Patch", "XDelta3 Patch Files (*.xdelta)");
     if (!patchPath.isEmpty()) {
@@ -151,7 +151,7 @@ void gzGUIWidget::patch_btn_clicked() {
     }
 }
 
-void gzGUIWidget::wad_btn_clicked() {
+void fpGUIWidget::wad_btn_clicked() {
     QString wadPath;
     if (og_wad_path->text().isEmpty())
         wadPath = handleFileDialog("Open WAD", "WAD Files (*.wad)");
@@ -161,11 +161,11 @@ void gzGUIWidget::wad_btn_clicked() {
     }
     if (!wadPath.isEmpty()) {
         og_wad_path->setText(wadPath);
-        gzinject_gui->defineSetting(wadPath, SettingType::WadPath);
+        fpinject_gui->defineSetting(wadPath, SettingType::WadPath);
     }
 }
 
-void gzGUIWidget::output_btn_clicked() {
+void fpGUIWidget::output_btn_clicked() {
     QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     if (!og_rom_path->text().isEmpty()) {
         QFileInfo rom_path(og_rom_path->text());
@@ -174,25 +174,25 @@ void gzGUIWidget::output_btn_clicked() {
     QString dirPath = QFileDialog::getExistingDirectory(this, "Open Directory", defaultPath);
     if (!dirPath.isEmpty()) {
         output_path->setText(dirPath);
-        gzinject_gui->defineSetting(dirPath, SettingType::OutputPath);
+        fpinject_gui->defineSetting(dirPath, SettingType::OutputPath);
     }
 }
 
-QString gzGUIWidget::handleFileDialog(QString windowTitle, QString fileType, QString defaultPath) {
+QString fpGUIWidget::handleFileDialog(QString windowTitle, QString fileType, QString defaultPath) {
     QFileDialog dialog(this);
     QString path = dialog.getOpenFileName(this, windowTitle, defaultPath, fileType + ";;All Files (*)");
     if (path.isEmpty()) { return nullptr; }
     return path;
 }
 
-void gzGUIWidget::updateCheckBoxSetting(int state) {
+void fpGUIWidget::updateCheckBoxSetting(int state) {
     if (state == Qt::Checked)
-        gzinject_gui->defineSetting("true", SettingType::OpenFolderWhenComplete);
+        fpinject_gui->defineSetting("true", SettingType::OpenFolderWhenComplete);
     else
-        gzinject_gui->defineSetting("false", SettingType::OpenFolderWhenComplete);
+        fpinject_gui->defineSetting("false", SettingType::OpenFolderWhenComplete);
 }
 
-void gzGUIWidget::updateCustomCheckBoxSetting(int state) {
+void fpGUIWidget::updateCustomCheckBoxSetting(int state) {
     if (state == Qt::Checked) {
         og_rom_path->setEnabled(true);
         og_rom_btn->setEnabled(true);
@@ -202,11 +202,11 @@ void gzGUIWidget::updateCustomCheckBoxSetting(int state) {
     }
 }
 
-void gzGUIWidget::setAppPath(QString path) {
+void fpGUIWidget::setAppPath(QString path) {
     appPath = path;
 }
 
-void gzGUIWidget::generate() {
+void fpGUIWidget::generate() {
     QString channelTitle = nullptr;
     QString channelId = nullptr;
     QString additionalArgs = nullptr;
@@ -217,11 +217,11 @@ void gzGUIWidget::generate() {
     if (!additional_args->text().isEmpty())
         additionalArgs = additional_args->text();
     if (custom_cbox->isChecked())
-        gzinject_gui->patchROM(og_rom_path->text(), og_patch_path->text(), appPath + QDir::separator() + "rom_patched");
+        fpinject_gui->patchROM(og_rom_path->text(), og_patch_path->text(), appPath + QDir::separator() + "rom_patched");
     else {
-        gzinject_gui->extractROM(og_wad_path->text(), appPath + QDir::separator() + "rom_decompressed");
-        gzinject_gui->patchROM(appPath + QDir::separator() + "rom_decompressed", og_patch_path->text(), appPath + QDir::separator() + "rom_patched");
+        fpinject_gui->extractROM(og_wad_path->text(), appPath + QDir::separator() + "rom_decompressed");
+        fpinject_gui->patchROM(appPath + QDir::separator() + "rom_decompressed", og_patch_path->text(), appPath + QDir::separator() + "rom_patched");
     }
-    gzinject_gui->injectWAD(appPath + QDir::separator() + "rom_patched", og_wad_path->text(), output_path->text(), output_cbox->isChecked(), channelTitle, channelId, additionalArgs);
-    gzinject_gui->cleanup();
+    fpinject_gui->injectWAD(appPath + QDir::separator() + "rom_patched", og_wad_path->text(), output_path->text(), output_cbox->isChecked(), channelTitle, channelId, additionalArgs);
+    fpinject_gui->cleanup();
 }
